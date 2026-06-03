@@ -1,5 +1,7 @@
 import requests
 import os
+import time
+import random
 
 def download_video(video_url, save_path=None):
     """
