@@ -1,83 +1,104 @@
-# 小红书数据爬虫项目
+# 小红书数据爬虫
 
-## 项目简介
-基于Scrapy框架的小红书数据采集系统，支持图文/视频笔记元数据抓取、用户信息采集、评论数据获取，并集成MongoDB存储。
+基于 Scrapy 框架的小红书数据采集系统，支持图文/视频笔记元数据抓取，MongoDB 存储 + 视频文件下载。
 
-## 主要功能
-✅ 支持推荐页/搜索页笔记抓取  
-✅ 自动识别图文/视频类型笔记  
-✅ 元数据采集（标题、作者、发布时间等）  
-✅ 多媒体链接抓取（封面图/视频直链）  
-✅ MongoDB持久化存储  
-✅ 随机请求延迟防封禁
+## 功能
+
+- ✅ 推荐页笔记抓取（去重）
+- ✅ 自动识别图文 / 视频类型
+- ✅ 标题、作者、发布时间、点赞、收藏、评论数等元数据
+- ✅ 视频自动下载到本地
+- ✅ MongoDB 持久化存储
+- ✅ 随机请求延迟（1~3 秒）
 
 ## 环境要求
-- Python 3.8+  
-- Scrapy 2.8+  
-- pymongo 4.3+  
+
+- Python 3.8+
 - MongoDB 5.0+
 
+## 安装
 
-## 配置说明
-1. 在`settings.py`中配置MongoDB连接信息（具体要与你的设置相匹配）：
+### pip（原生）
+
+```bash
+pip install -r requirements.txt
+```
+
+### uv（推荐）
+
+```bash
+uv sync
+```
+
+## 配置
+
+确保本机 MongoDB 已启动，然后在 [redbook/settings.py](redbook/settings.py) 中确认连接信息与你的环境一致：
+
 ```python
 MONGO_URI = 'mongodb://localhost:27017'
-MONGO_DATABASE = 'redbook' 
+MONGO_DATABASE = 'redbook'
 ```
 
-2. 视频存储路径默认在`database/videos`目录
+视频默认存储路径为项目根目录下的 `database/videos/`，可在 `settings.py` 中修改 `VIDEO_STORE_PATH`。
 
 ## 快速开始
-  ```bash
-    python run_spider.py
-  ```
-## 项目结构
+
+```bash
+python run_spider.py
 ```
-redbook/
-├── spiders/          # 爬虫目录
-│   ├── __init__.py
-│   └── xhs.py        # 主爬虫逻辑
-├── items.py          # 数据模型定义
-├── pipelines.py      # MongoDB存储管道
-├── middlewares.py    # 中间件配置
-└── videodownloader.py # 视频下载模块
+
+爬虫会循环运行，直到抓满 **5000 条笔记 + 50 个视频**后自动停止。你也可以按 `Ctrl+C` 随时中断。
+
+## 项目结构
+
+```
+XHS-SPIDER/
+├── run_spider.py           # 入口脚本（循环启动 + 进度统计）
+├── requirements.txt        # pip 依赖
+├── pyproject.toml          # 项目配置 / uv 依赖
+├── scrapy.cfg              # Scrapy 部署配置
+├── redbook/                # Scrapy 项目包
+│   ├── spiders/
+│   │   └── xhs.py          # 核心爬虫（推荐页 → 详情页）
+│   ├── items.py            # 数据模型（RedbookItem / CommentItem）
+│   ├── pipelines.py        # MongoDB 存储管道
+│   ├── middlewares.py      # 下载中间件
+│   ├── settings.py         # 全局配置（MongoDB / UA / 路径）
+│   └── videodownloader.py  # 视频下载工具
+├── samples/                # 页面 HTML 样本（开发调试用）
+└── database/
+    └── videos/             # 已下载的视频文件
 ```
 
 ## 数据示例
+
+MongoDB `redbook.notes` 集合中的一条记录：
+
 ```json
 {
-  "title": "夏日穿搭指南",
-  "author": "时尚达人",
-  "like_count": 2458,
-  "media_url": "https://sns-video.xhscdn.com/...mp4",
-  "collect_count": 892,
-  "publish_time": "2023-07-15"
+  "type": "video",
+  "title": "汉服在国外（炸街系列）",
+  "author": "周宝不保周",
+  "time": ["2023-07-03"],
+  "note_link": "https://www.xiaohongshu.com/explore/64a26705000000001c00fd8d",
+  "author_link": "https://www.xiaohongshu.com/explore/64a26705000000001c00fd8d",
+  "like_count": "7.5万",
+  "comment_count": "1403",
+  "collect_count": "8111",
+  "keywords": "",
+  "description": "让世界看到中国旗袍～",
+  "media_url": "https://sns-video-qc.xhscdn.com/stream/..."
 }
 ```
 
+## 已知限制
+
+- 图文笔记的多图列表为 JS 动态加载，纯 Scrapy 无法获取
+- 评论抓取接口已预留（`CommentItem`），尚未实现
+- 无代理池 / Cookie 管理，高频率抓取可能触发反爬
+- XPath 表达式依赖页面结构，小红书改版可能导致失效
+
 ## 注意事项
-1. 请合理设置请求间隔（默认1-3秒随机延迟）
-2. 视频下载功能需自行调用`videodownloader.py`模块
-3. 遵守平台robots.txt规则，合理使用数据"
 
-## 未来展望
-1. **技术升级**：
-   - 引入Selenium/Puppeteer解决动态加载问题
-   - 开发分布式爬虫架构提升采集效率
-   - 实现自动化IP代理池管理
-
-2. **功能扩展**：
-   - 增加用户关系图谱分析功能
-   - 开发评论情感分析模块
-   - 构建基于Elasticsearch的全文检索系统
-
-3. **数据应用**：
-   - 开发可视化分析仪表盘
-   - 建立热点话题预警机制
-   - 探索基于大数据的推荐算法
-
-4. **合规发展**：
-   - 完善数据脱敏处理流程
-   - 开发数据使用授权管理系统
-   - 遵循GDPR等数据隐私规范
-    
+1. 爬虫默认忽略 `robots.txt`（`ROBOTSTXT_OBEY = False`），请合理使用
+2. 请勿将抓取数据用于商业用途，遵守相关法律法规
