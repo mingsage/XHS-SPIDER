@@ -38,6 +38,7 @@ uv sync
 MONGO_URI = 'mongodb://localhost:27017'
 MONGO_DATABASE = 'redbook'
 ```
+默认是一致的，只要 MongoDB 服务在运行，启动项目后会自动创建 redbook 的数据库。
 
 视频默认存储路径为项目根目录下的 `database/videos/`，可在 `settings.py` 中修改 `VIDEO_STORE_PATH`。
 
