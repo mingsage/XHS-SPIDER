@@ -17,9 +17,11 @@ DEFAULT_REQUEST_HEADERS = {
 }
 # 关闭robots.txt检查
 ROBOTSTXT_OBEY = False
-# 添加视频存储配置
-VIDEO_STORE_PATH = 'd:\\coding\\ai_learning\\ai实训\\数据爬取-小红书实战\\redbook\\database\\videos'
-# 创建视频存储目录（如果不存在）
+# 项目根目录（settings.py 在 redbook/ 下，往上两级是项目根）
 import os
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# 添加视频存储配置（项目根目录下的 database/videos/）
+VIDEO_STORE_PATH = os.path.join(_PROJECT_ROOT, 'database', 'videos')
+# 创建视频存储目录（如果不存在）
 if not os.path.exists(VIDEO_STORE_PATH):
     os.makedirs(VIDEO_STORE_PATH)

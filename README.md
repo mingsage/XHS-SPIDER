@@ -19,10 +19,10 @@
 
 
 ## 配置说明
-1. 在`settings.py`中配置MongoDB连接信息：
+1. 在`settings.py`中配置MongoDB连接信息（具体要与你的设置相匹配）：
 ```python
 MONGO_URI = 'mongodb://localhost:27017'
-MONGO_DATABASE = 'redbook'
+MONGO_DATABASE = 'redbook' 
 ```
 
 2. 视频存储路径默认在`database/videos`目录

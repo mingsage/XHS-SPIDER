@@ -1,7 +1,9 @@
 import scrapy
 from ..items import RedbookItem
+from ..settings import VIDEO_STORE_PATH
 import random
 import time
+import os
 from ..videodownloader import download_video
 
 class XhsSpider(scrapy.Spider):
@@ -57,7 +59,7 @@ class XhsSpider(scrapy.Spider):
 
             # 下载视频逻辑
             video_url = item['media_url']
-            save_path = f"database/videos/{item['title']}.mp4"  # 自定义保存路径
+            save_path = os.path.join(VIDEO_STORE_PATH, f"{item['title']}.mp4")
             download_video(video_url, save_path)
 
         else:

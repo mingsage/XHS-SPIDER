@@ -3,6 +3,9 @@ import pymongo
 import glob
 from datetime import datetime
 
+# 项目根目录（run_spider.py 所在目录）
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # 连接MongoDB
 client = pymongo.MongoClient('mongodb://localhost:27017/')
 db = client['redbook']
@@ -16,7 +19,7 @@ def print_db_count():
 
 # 获取并打印视频文件数
 def print_video_count():
-    video_dir = 'd:\\coding\\ai_learning\\ai实训\\数据爬取-小红书实战\\redbook\\database\\videos'
+    video_dir = os.path.join(BASE_DIR, 'redbook', 'database', 'videos')
     video_count = len(glob.glob(video_dir + '/*.mp4'))  # 统计mp4文件数量
     print(f"当前视频文件数: {video_count}")
     return video_count
@@ -29,7 +32,7 @@ def write_to_file(db_count, video_count):
     """
     try:
         # 指定完整文件路径
-        file_path = 'd:\\coding\\ai_learning\\ai实训\\数据爬取-小红书实战\\redbook\\database\\爬虫数据清单.txt'
+        file_path = os.path.join(BASE_DIR, 'redbook', 'database', '爬虫数据清单.txt')
         
         # 获取当前时间
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
