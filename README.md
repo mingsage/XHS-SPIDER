@@ -49,7 +49,7 @@ MONGO_DATABASE = 'redbook'
 python run_spider.py
 
 # uv 用户
-uv run python run_spider.py
+uv run python run_spider.py # 或者激活虚拟环境后采取 python run_spider.py
 ```
 
 爬虫会循环运行，直到抓满 **5000 条笔记 + 50 个视频**后自动停止。你也可以按 `Ctrl+C` 随时中断。
