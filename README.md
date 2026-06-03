@@ -44,7 +44,11 @@ MONGO_DATABASE = 'redbook'
 ## 快速开始
 
 ```bash
+# pip 用户
 python run_spider.py
+
+# uv 用户
+uv run python run_spider.py
 ```
 
 爬虫会循环运行，直到抓满 **5000 条笔记 + 50 个视频**后自动停止。你也可以按 `Ctrl+C` 随时中断。
